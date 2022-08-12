@@ -9,6 +9,9 @@ namespace ColorDiff
 {
     public partial class PowerPictureBox : UserControl
     {
+        private List<int> _Colors = new List<int>();
+        public List<int> Colors = new List<int>();
+
         private List<Rectangle> Rects = new List<Rectangle>();
         private bool DrawingPost = false;
         private bool DrawingMask = false;
@@ -77,25 +80,41 @@ namespace ColorDiff
 
         private void UpdateOverlay(MouseButtons btn = MouseButtons.None)
         {
-            Bitmap bmp = new Bitmap(PBX.BackgroundImage.Width, PBX.BackgroundImage.Height);
+            Bitmap clone = (Bitmap)PBX.BackgroundImage.Clone();
+            _Colors.Clear();
 
-            Rectangle rect = new Rectangle(
+            Bitmap bmp = new Bitmap(clone.Width, clone.Height);
+            
+            Rectangle newRect = new Rectangle(
                 Math.Min(StartPoint.X, EndPoint.X),
                 Math.Min(StartPoint.Y, EndPoint.Y),
                 Math.Abs(EndPoint.X - StartPoint.X),
                 Math.Abs(EndPoint.Y - StartPoint.Y));
 
-            if (btn == MouseButtons.Left && !DrawingPost) Rects.Add(rect);
+            if (btn == MouseButtons.Left && !DrawingPost) Rects.Add(newRect);
 
             using (Graphics g = Graphics.FromImage(bmp))
             {
-                if (DrawingMask) g.FillRectangle(Brushes.LawnGreen, rect);
-                else if (DrawingPost) g.DrawRectangle(new Pen(Brushes.HotPink, (float)(Math.Min(bmp.Height, bmp.Width) * 0.005)), rect);
-                foreach (Rectangle post in Rects)
-                    g.DrawRectangle(new Pen(Brushes.HotPink, (float)(Math.Min(bmp.Height, bmp.Width) * 0.005)), post);
+                if (DrawingMask) g.FillRectangle(Brushes.LawnGreen, newRect);
+                else if (DrawingPost) g.DrawRectangle(new Pen(Brushes.HotPink, (float)(Math.Min(bmp.Height, bmp.Width) * 0.005)), newRect);
+                foreach (Rectangle rect in Rects)
+                {
+                    g.DrawRectangle(new Pen(Brushes.HotPink, (float)(Math.Min(bmp.Height, bmp.Width) * 0.005)), rect);
+
+                    // Find colors
+                    for (int i = rect.Left; i < rect.Right; i++)
+                    {
+                        for (int j = rect.Top; j < rect.Bottom; j++)
+                        {
+                            int c = clone.GetPixel(i, j).ToArgb();
+                            if (!_Colors.Contains(c)) _Colors.Add(c);
+                        }
+                    }
+                }
             }
 
             PBX.Image = bmp;
+            Colors = _Colors;
         }
 
         /// <summary>

@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.TLP = new System.Windows.Forms.TableLayoutPanel();
             this.powerPictureBox1 = new ColorDiff.PowerPictureBox();
             this.powerPictureBox2 = new ColorDiff.PowerPictureBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.RTB = new System.Windows.Forms.RichTextBox();
+            this.Timer = new System.Windows.Forms.Timer(this.components);
             this.TLP.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,7 +46,7 @@
             this.TLP.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.TLP.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.TLP.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.TLP.Controls.Add(this.richTextBox1, 0, 1);
+            this.TLP.Controls.Add(this.RTB, 0, 1);
             this.TLP.Controls.Add(this.powerPictureBox1, 0, 0);
             this.TLP.Controls.Add(this.powerPictureBox2, 1, 0);
             this.TLP.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -58,6 +60,7 @@
             // 
             // powerPictureBox1
             // 
+            this.powerPictureBox1.AccessibleName = "Img A";
             this.powerPictureBox1.AutoSize = true;
             this.powerPictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.powerPictureBox1.Location = new System.Drawing.Point(10, 10);
@@ -68,6 +71,7 @@
             // 
             // powerPictureBox2
             // 
+            this.powerPictureBox2.AccessibleName = "Img B";
             this.powerPictureBox2.AutoSize = true;
             this.powerPictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.powerPictureBox2.Location = new System.Drawing.Point(330, 10);
@@ -76,15 +80,21 @@
             this.powerPictureBox2.Size = new System.Drawing.Size(300, 330);
             this.powerPictureBox2.TabIndex = 4;
             // 
-            // richTextBox1
+            // RTB
             // 
-            this.TLP.SetColumnSpan(this.richTextBox1, 2);
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(3, 353);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(634, 94);
-            this.richTextBox1.TabIndex = 2;
-            this.richTextBox1.Text = "";
+            this.TLP.SetColumnSpan(this.RTB, 2);
+            this.RTB.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RTB.Location = new System.Drawing.Point(3, 353);
+            this.RTB.Name = "RTB";
+            this.RTB.Size = new System.Drawing.Size(634, 94);
+            this.RTB.TabIndex = 2;
+            this.RTB.Text = "";
+            // 
+            // Timer
+            // 
+            this.Timer.Enabled = true;
+            this.Timer.Interval = 250;
+            this.Timer.Tick += new System.EventHandler(this.Timer_Tick);
             // 
             // Form1
             // 
@@ -106,7 +116,8 @@
         private System.Windows.Forms.TableLayoutPanel TLP;
         private PowerPictureBox powerPictureBox1;
         private PowerPictureBox powerPictureBox2;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox RTB;
+        private System.Windows.Forms.Timer Timer;
     }
 }
 
