@@ -28,12 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.TLP = new System.Windows.Forms.TableLayoutPanel();
+            this.RTB = new System.Windows.Forms.RichTextBox();
             this.powerPictureBox1 = new ColorDiff.PowerPictureBox();
             this.powerPictureBox2 = new ColorDiff.PowerPictureBox();
-            this.RTB = new System.Windows.Forms.RichTextBox();
-            this.Timer = new System.Windows.Forms.Timer(this.components);
             this.TLP.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,6 +56,16 @@
             this.TLP.Size = new System.Drawing.Size(640, 450);
             this.TLP.TabIndex = 0;
             // 
+            // RTB
+            // 
+            this.TLP.SetColumnSpan(this.RTB, 2);
+            this.RTB.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RTB.Location = new System.Drawing.Point(3, 353);
+            this.RTB.Name = "RTB";
+            this.RTB.Size = new System.Drawing.Size(634, 94);
+            this.RTB.TabIndex = 2;
+            this.RTB.Text = "";
+            // 
             // powerPictureBox1
             // 
             this.powerPictureBox1.AccessibleName = "Img A";
@@ -80,22 +88,6 @@
             this.powerPictureBox2.Size = new System.Drawing.Size(300, 330);
             this.powerPictureBox2.TabIndex = 4;
             // 
-            // RTB
-            // 
-            this.TLP.SetColumnSpan(this.RTB, 2);
-            this.RTB.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RTB.Location = new System.Drawing.Point(3, 353);
-            this.RTB.Name = "RTB";
-            this.RTB.Size = new System.Drawing.Size(634, 94);
-            this.RTB.TabIndex = 2;
-            this.RTB.Text = "";
-            // 
-            // Timer
-            // 
-            this.Timer.Enabled = true;
-            this.Timer.Interval = 250;
-            this.Timer.Tick += new System.EventHandler(this.Timer_Tick);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -117,7 +109,6 @@
         private PowerPictureBox powerPictureBox1;
         private PowerPictureBox powerPictureBox2;
         private System.Windows.Forms.RichTextBox RTB;
-        private System.Windows.Forms.Timer Timer;
     }
 }
 

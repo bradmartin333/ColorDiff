@@ -10,7 +10,7 @@ namespace ColorDiff
             InitializeComponent();
         }
 
-        private void Timer_Tick(object sender, System.EventArgs e)
+        public void RefreshData()
         {
             int min = int.MaxValue;
             int max = int.MinValue;

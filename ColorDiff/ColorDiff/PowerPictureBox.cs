@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -9,12 +10,10 @@ namespace ColorDiff
 {
     public partial class PowerPictureBox : UserControl
     {
-        private List<int> _Colors = new List<int>();
         public List<int> Colors = new List<int>();
 
-        private List<Rectangle> Rects = new List<Rectangle>();
+        private readonly List<Rectangle> Rects = new List<Rectangle>();
         private bool DrawingPost = false;
-        private bool DrawingMask = false;
         private Point StartPoint = Point.Empty;
         private Point EndPoint = Point.Empty;
 
@@ -42,10 +41,11 @@ namespace ColorDiff
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    if (!DrawingMask) DrawingPost = !DrawingPost;
-                    else
+                    DrawingPost = !DrawingPost;
+                    if (!DrawingPost)
                     {
-                        StopDrawing();
+                        UpdateOverlay(e.Button);
+                        UpdateColors();
                         return;
                     }
                     break;
@@ -53,37 +53,24 @@ namespace ColorDiff
                     return;
             }
 
-            if (DrawingPost || DrawingMask)
-            {
-                StartPoint = ZoomMousePos(e.Location);
-                EndPoint = StartPoint;
-                PBX.Image = null;
-            }
-
-            UpdateOverlay(e.Button);
+            StartPoint = ZoomMousePos(e.Location);
+            EndPoint = StartPoint;
+            PBX.Image = null;
+            UpdateOverlay();
         }
 
         private void PBX_MouseMove(object sender, MouseEventArgs e)
         {
-            if (DrawingPost || DrawingMask) EndPoint = ZoomMousePos(e.Location);
-            UpdateOverlay();
-        }
-
-        private void StopDrawing()
-        {
-            DrawingPost = false;
-            DrawingMask = false;
-            StartPoint = Point.Empty;
-            EndPoint = Point.Empty;
-            UpdateOverlay();
+            if (DrawingPost)
+            {
+                EndPoint = ZoomMousePos(e.Location);
+                UpdateOverlay();
+            }
         }
 
         private void UpdateOverlay(MouseButtons btn = MouseButtons.None)
         {
-            Bitmap clone = (Bitmap)PBX.BackgroundImage.Clone();
-            _Colors.Clear();
-
-            Bitmap bmp = new Bitmap(clone.Width, clone.Height);
+            Bitmap bmp = new Bitmap(PBX.BackgroundImage.Width, PBX.BackgroundImage.Height);
             
             Rectangle newRect = new Rectangle(
                 Math.Min(StartPoint.X, EndPoint.X),
@@ -91,30 +78,30 @@ namespace ColorDiff
                 Math.Abs(EndPoint.X - StartPoint.X),
                 Math.Abs(EndPoint.Y - StartPoint.Y));
 
-            if (btn == MouseButtons.Left && !DrawingPost) Rects.Add(newRect);
+            if (btn == MouseButtons.Left && newRect != Rectangle.Empty) Rects.Add(newRect);
 
             using (Graphics g = Graphics.FromImage(bmp))
             {
-                if (DrawingMask) g.FillRectangle(Brushes.LawnGreen, newRect);
-                else if (DrawingPost) g.DrawRectangle(new Pen(Brushes.HotPink, (float)(Math.Min(bmp.Height, bmp.Width) * 0.005)), newRect);
+                if (DrawingPost) g.DrawRectangle(new Pen(Brushes.HotPink, (float)(Math.Min(bmp.Height, bmp.Width) * 0.005)), newRect);
                 foreach (Rectangle rect in Rects)
-                {
                     g.DrawRectangle(new Pen(Brushes.HotPink, (float)(Math.Min(bmp.Height, bmp.Width) * 0.005)), rect);
-
-                    // Find colors
-                    for (int i = rect.Left; i < rect.Right; i++)
-                    {
-                        for (int j = rect.Top; j < rect.Bottom; j++)
-                        {
-                            int c = clone.GetPixel(i, j).ToArgb();
-                            if (!_Colors.Contains(c)) _Colors.Add(c);
-                        }
-                    }
-                }
             }
 
             PBX.Image = bmp;
-            Colors = _Colors;
+        }
+
+        private void UpdateColors()
+        {
+            Bitmap clone = (Bitmap)PBX.BackgroundImage.Clone();
+            Colors.Clear();
+            foreach (Rectangle rect in Rects)
+                for (int i = rect.Left; i < rect.Right; i++)
+                    for (int j = rect.Top; j < rect.Bottom; j++)
+                    {
+                        int c = clone.GetPixel(i, j).ToArgb();
+                        if (!Colors.Contains(c)) Colors.Add(c);
+                    }
+            Application.OpenForms.OfType<Form1>().First().RefreshData();
         }
 
         /// <summary>
