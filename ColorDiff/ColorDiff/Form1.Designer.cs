@@ -53,16 +53,16 @@
             this.TLP.RowCount = 2;
             this.TLP.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.TLP.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.TLP.Size = new System.Drawing.Size(640, 450);
+            this.TLP.Size = new System.Drawing.Size(1096, 685);
             this.TLP.TabIndex = 0;
             // 
             // RTB
             // 
             this.TLP.SetColumnSpan(this.RTB, 2);
             this.RTB.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RTB.Location = new System.Drawing.Point(3, 353);
+            this.RTB.Location = new System.Drawing.Point(3, 588);
             this.RTB.Name = "RTB";
-            this.RTB.Size = new System.Drawing.Size(634, 94);
+            this.RTB.Size = new System.Drawing.Size(1090, 94);
             this.RTB.TabIndex = 2;
             this.RTB.Text = "";
             // 
@@ -74,7 +74,7 @@
             this.powerPictureBox1.Location = new System.Drawing.Point(10, 10);
             this.powerPictureBox1.Margin = new System.Windows.Forms.Padding(10);
             this.powerPictureBox1.Name = "powerPictureBox1";
-            this.powerPictureBox1.Size = new System.Drawing.Size(300, 330);
+            this.powerPictureBox1.Size = new System.Drawing.Size(528, 565);
             this.powerPictureBox1.TabIndex = 3;
             // 
             // powerPictureBox2
@@ -82,17 +82,17 @@
             this.powerPictureBox2.AccessibleName = "Img B";
             this.powerPictureBox2.AutoSize = true;
             this.powerPictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.powerPictureBox2.Location = new System.Drawing.Point(330, 10);
+            this.powerPictureBox2.Location = new System.Drawing.Point(558, 10);
             this.powerPictureBox2.Margin = new System.Windows.Forms.Padding(10);
             this.powerPictureBox2.Name = "powerPictureBox2";
-            this.powerPictureBox2.Size = new System.Drawing.Size(300, 330);
+            this.powerPictureBox2.Size = new System.Drawing.Size(528, 565);
             this.powerPictureBox2.TabIndex = 4;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(640, 450);
+            this.ClientSize = new System.Drawing.Size(1096, 685);
             this.Controls.Add(this.TLP);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "Form1";

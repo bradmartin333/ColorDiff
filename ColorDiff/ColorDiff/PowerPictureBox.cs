@@ -149,6 +149,7 @@ namespace ColorDiff
         {
             Rects.Clear();
             UpdateOverlay();
+            UpdateColors();
         }
 
         #endregion
