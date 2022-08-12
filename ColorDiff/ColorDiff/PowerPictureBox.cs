@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Net;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -11,8 +9,6 @@ namespace ColorDiff
 {
     public partial class PowerPictureBox : UserControl
     {
-        private readonly bool LOADING = false;
-
         private List<Rectangle> Rects = new List<Rectangle>();
         private bool DrawingPost = false;
         private bool DrawingMask = false;
@@ -141,6 +137,12 @@ namespace ColorDiff
                 pos.X /= scale;
             }
             return new Point((int)pos.X, (int)pos.Y);
+        }
+
+        private void BtnClear_Click(object sender, EventArgs e)
+        {
+            Rects.Clear();
+            UpdateOverlay();
         }
 
         #endregion
