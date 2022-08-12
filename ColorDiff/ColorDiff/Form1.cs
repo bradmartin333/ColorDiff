@@ -48,8 +48,7 @@ namespace ColorDiff
 
         private void DoDragEnter(DragEventArgs e, bool isA)
         {
-            string filename;
-            ValidData = GetFilename(out filename, e);
+            ValidData = GetFilename(out string filename, e);
             if (ValidData)
             {
                 if (isA)
@@ -85,13 +84,12 @@ namespace ColorDiff
         private bool GetFilename(out string filename, DragEventArgs e)
         {
             bool ret = false;
-            filename = String.Empty;
+            filename = string.Empty;
             if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy)
             {
-                Array data = ((IDataObject)e.Data).GetData("FileDrop") as Array;
-                if (data != null)
+                if (e.Data.GetData("FileDrop") is Array data)
                 {
-                    if ((data.Length == 1) && (data.GetValue(0) is String))
+                    if ((data.Length == 1) && (data.GetValue(0) is string))
                     {
                         filename = ((string[])data)[0];
                         string ext = Path.GetExtension(filename).ToLower();
