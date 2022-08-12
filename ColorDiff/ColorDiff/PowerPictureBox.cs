@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -8,6 +11,14 @@ namespace ColorDiff
 {
     public partial class PowerPictureBox : UserControl
     {
+        private readonly bool LOADING = false;
+
+        private List<Rectangle> Rects = new List<Rectangle>();
+        private bool DrawingPost = false;
+        private bool DrawingMask = false;
+        private Point StartPoint = Point.Empty;
+        private Point EndPoint = Point.Empty;
+
         private protected bool ValidData;
         private string ImagePath;
         private protected Image Image;
@@ -16,10 +27,125 @@ namespace ColorDiff
         public PowerPictureBox()
         {
             InitializeComponent();
+
+            PBX.MouseDown += PBX_MouseDown;
+            PBX.MouseMove += PBX_MouseMove;
+
             PBX.AllowDrop = true;
             PBX.DragEnter += PBX_DragEnter;
             PBX.DragDrop += PBX_DragDrop;
         }
+
+        #region Drawing ROI
+
+        private void PBX_MouseDown(object sender, MouseEventArgs e)
+        {
+            switch (e.Button)
+            {
+                case MouseButtons.Left:
+                    if (!DrawingMask) DrawingPost = !DrawingPost;
+                    else
+                    {
+                        StopDrawing();
+                        return;
+                    }
+                    break;
+                default:
+                    return;
+            }
+
+            if (DrawingPost || DrawingMask)
+            {
+                StartPoint = ZoomMousePos(e.Location);
+                EndPoint = StartPoint;
+                PBX.Image = null;
+            }
+
+            UpdateOverlay(e.Button);
+        }
+
+        private void PBX_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (DrawingPost || DrawingMask) EndPoint = ZoomMousePos(e.Location);
+            UpdateOverlay();
+        }
+
+        private void StopDrawing()
+        {
+            DrawingPost = false;
+            DrawingMask = false;
+            StartPoint = Point.Empty;
+            EndPoint = Point.Empty;
+            UpdateOverlay();
+        }
+
+        private void UpdateOverlay(MouseButtons btn = MouseButtons.None)
+        {
+            Bitmap bmp = new Bitmap(PBX.BackgroundImage.Width, PBX.BackgroundImage.Height);
+
+            Rectangle rect = new Rectangle(
+                Math.Min(StartPoint.X, EndPoint.X),
+                Math.Min(StartPoint.Y, EndPoint.Y),
+                Math.Abs(EndPoint.X - StartPoint.X),
+                Math.Abs(EndPoint.Y - StartPoint.Y));
+
+            if (btn == MouseButtons.Left && !DrawingPost) Rects.Add(rect);
+
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                if (DrawingMask) g.FillRectangle(Brushes.LawnGreen, rect);
+                else if (DrawingPost) g.DrawRectangle(new Pen(Brushes.HotPink, (float)(Math.Min(bmp.Height, bmp.Width) * 0.005)), rect);
+                foreach (Rectangle post in Rects)
+                    g.DrawRectangle(new Pen(Brushes.HotPink, (float)(Math.Min(bmp.Height, bmp.Width) * 0.005)), post);
+            }
+
+            PBX.Image = bmp;
+        }
+
+        /// <summary>
+        /// Method for adjusting mouse pos to pictureBox set to Zoom
+        /// </summary>
+        /// <param name="click">
+        /// Mouse coordinates
+        /// </param>
+        /// <returns>
+        /// Pixel coordinates
+        /// </returns>
+        private Point ZoomMousePos(Point click)
+        {
+            Size pbxSize = PBX.Size;
+            Size imgSize = PBX.BackgroundImage.Size;
+            float ImageAspect = imgSize.Width / (float)imgSize.Height;
+            float controlAspect = pbxSize.Width / (float)pbxSize.Height;
+            PointF pos = new PointF(click.X, click.Y);
+            if (ImageAspect > controlAspect)
+            {
+                float ratioWidth = imgSize.Width / (float)pbxSize.Width;
+                pos.X *= ratioWidth;
+                float scale = pbxSize.Width / (float)imgSize.Width;
+                float displayHeight = scale * imgSize.Height;
+                float diffHeight = pbxSize.Height - displayHeight;
+                diffHeight /= 2;
+                pos.Y -= diffHeight;
+                pos.Y /= scale;
+            }
+            else
+            {
+                float ratioHeight = imgSize.Height / (float)pbxSize.Height;
+                pos.Y *= ratioHeight;
+                float scale = pbxSize.Height / (float)imgSize.Height;
+                float displayWidth = scale * imgSize.Width;
+                float diffWidth = pbxSize.Width - displayWidth;
+                diffWidth /= 2;
+                pos.X -= diffWidth;
+                pos.X /= scale;
+            }
+            return new Point((int)pos.X, (int)pos.Y);
+        }
+
+        #endregion
+
+        #region Drag Drop Image
 
         private void PBX_DragEnter(object sender, DragEventArgs e)
         {
@@ -68,5 +194,7 @@ namespace ColorDiff
         }
 
         protected void LoadImage() => Image = new Bitmap(ImagePath);
+
+        #endregion
     }
 }
