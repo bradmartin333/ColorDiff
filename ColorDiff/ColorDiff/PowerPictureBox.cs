@@ -187,17 +187,13 @@ namespace ColorDiff
             bool ret = false;
             filename = string.Empty;
             if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy)
-            {
                 if (e.Data.GetData("FileDrop") is Array data)
-                {
                     if ((data.Length == 1) && (data.GetValue(0) is string))
                     {
                         filename = ((string[])data)[0];
                         string ext = Path.GetExtension(filename).ToLower();
                         if ((ext == ".jpg") || (ext == ".png") || (ext == ".bmp")) ret = true;
                     }
-                }
-            }
             return ret;
         }
 
